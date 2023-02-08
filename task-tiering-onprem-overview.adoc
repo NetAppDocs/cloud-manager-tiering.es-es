@@ -1,0 +1,31 @@
+---
+sidebar: sidebar 
+permalink: task-tiering-onprem-overview.html 
+keywords: overview, tiering overview, tiered clusters, clusters enabled for tiering, data tiering overview, cold data, hot data, tiered data, savings, savings opportunities, saving opportunity, policies, cold snapshots, all dp user data, cold user data & snapshots, cold user data and snapshots, all user data, no policy, marketplace subscriptions, clusters associated 
+summary: La organización en niveles del cloud proporciona una visión global de la organización en niveles de los datos desde cada uno de los clústeres locales. Esta descripción general proporciona una visión clara de su entorno y le permite tomar las acciones adecuadas. 
+---
+= Obtenga información general sobre la organización en niveles de los datos en los clústeres
+:toc: macro
+:hardbreaks:
+:allow-uri-read: 
+:toc: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+:toc-position: content
+
+
+[role="lead"]
+La organización en niveles del cloud proporciona una visión global de la organización en niveles de los datos desde cada uno de los clústeres locales. Esta descripción general proporciona una visión clara de su entorno y le permite tomar las acciones adecuadas.
+
+Sólo tiene que hacer clic en *Tiering > On-Prem Overview*. El almacenamiento en niveles de cloud proporciona los siguientes detalles sobre su entorno.
+
+image:screenshot_tiering_onprem_overview.gif["Captura de pantalla de la página de información general en las instalaciones."]
+
+Clústeres activos:: El número de clústeres que actualmente dan organización en niveles los datos en el cloud, los clústeres que no condicionada por niveles los datos en el cloud y el número de clústeres que no admiten la organización en niveles de los datos.
+Descripción general de los datos:: La cantidad de datos que se escalaron en el cloud y la cantidad de datos activos e inactivos del clúster.
+Ahorro total:: La cantidad de dinero que ha ahorrado al organizar en niveles los datos en el cloud, así como la cantidad de dinero que podría ahorrar organizando en niveles más datos en el cloud.
+Normativas:: El número de veces que cada política de organización en niveles se ha aplicado a un volumen.
+Suscripciones a Marketplace:: El número de clústeres asociados con cada tipo de suscripción a Marketplace y una indicación acerca del estado de su suscripción.
+

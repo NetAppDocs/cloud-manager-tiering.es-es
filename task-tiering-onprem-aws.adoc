@@ -1,0 +1,380 @@
+---
+sidebar: sidebar 
+permalink: task-tiering-onprem-aws.html 
+keywords: data tiering, fabricpool, cloud tiering, tiering cold data, tiering inactive data, tiering aff, tiering fas, tiering ontap, tiering volumes, tier data, tier cold data, tier fas, tier aff, tier ontap, aws, amazon, s3 
+summary: Libere espacio en sus clústeres de ONTAP en las instalaciones organizando en niveles los datos inactivos en Amazon S3. 
+---
+= Organización en niveles de los datos de los clústeres ONTAP en las instalaciones a Amazon S3
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Libere espacio en sus clústeres de ONTAP en las instalaciones organizando en niveles los datos inactivos en Amazon S3.
+
+
+
+== Inicio rápido
+
+Comience rápidamente siguiendo estos pasos. En las siguientes secciones del tema se proporcionan detalles sobre cada paso.
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-1.png["Uno"] Identifique el método de configuración que utilizará
+[role="quick-margin-para"]
+Elija si va a conectar su clúster de ONTAP en las instalaciones directamente a AWS S3 a través de una Internet pública, o si va a usar una VPN o AWS Direct Connect y enrutar el tráfico a través de una interfaz privada de VPC Endpoint a AWS S3.
+
+[role="quick-margin-para"]
+<<Diagramas de red para las opciones de conexión,Consulte los métodos de conexión disponibles.>>
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-2.png["Dos"] Prepare el conector BlueXP
+[role="quick-margin-para"]
+Si ya tiene un conector puesto en marcha en AWS VPC o en sus instalaciones, todo estará configurado. Si no es así, necesitará crear un conector para organizar los datos de ONTAP en niveles en el almacenamiento AWS S3. También deberá personalizar los ajustes de red del conector para que pueda conectarse a AWS S3.
+
+[role="quick-margin-para"]
+<<Prepare el conector,Consulte cómo crear un conector y cómo definir los ajustes de red necesarios.>>
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-3.png["Tres"] Prepare su clúster de ONTAP en las instalaciones
+[role="quick-margin-para"]
+Descubra su clúster de ONTAP en BlueXP, compruebe que cumple los requisitos mínimos y personalice la configuración de red para que el clúster se pueda conectar a AWS S3.
+
+[role="quick-margin-para"]
+<<Prepare el clúster ONTAP,Descubra cómo preparar su clúster ONTAP local.>>
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-4.png["Cuatro"] Prepare Amazon S3 como destino de organización en niveles
+[role="quick-margin-para"]
+Configurar permisos para que Connector cree y gestione el bloque de S3. También tendrá que configurar permisos para el clúster de ONTAP en las instalaciones para que pueda leer y escribir datos en el bloque de S3.
+
+[role="quick-margin-para"]
+<<Configure permisos de S3,Consulte cómo configurar permisos para el conector y para el clúster local.>>
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-5.png["Cinco"] Active Cloud Tiering en el sistema
+[role="quick-margin-para"]
+Seleccione un entorno de trabajo en las instalaciones, haga clic en *Activar* para el servicio Tiering y siga las indicaciones para organizar los datos en niveles en Amazon S3.
+
+[role="quick-margin-para"]
+<<Organice en niveles los datos inactivos del primer clúster en Amazon S3,Vea cómo habilitar la segmentación en niveles para sus volúmenes.>>
+
+.image:https://raw.githubusercontent.com/NetAppDocs/common/main/media/number-6.png["Seis"] Configurar la licencia
+[role="quick-margin-para"]
+Cuando finalice su prueba gratuita, pague por Cloud Tiering mediante una suscripción de pago por uso, una licencia BYOL de Cloud Tiering de ONTAP o una combinación de ambos:
+
+[role="quick-margin-list"]
+* Para suscribirse desde el AWS Marketplace, https://aws.amazon.com/marketplace/pp/prodview-oorxakq6lq7m4?sr=0-8&ref_=beagle&applicationId=AWSMPContessa["Vaya a la oferta de BlueXP Marketplace"^], Haga clic en *Suscribirse* y, a continuación, siga las indicaciones.
+* Para pagar con una licencia BYOL de Cloud Tiering, mailto:ng-cloud-tiering@netapp.com?subject=Licensing[contactarnos si necesita adquirirla], y luego link:task-licensing-cloud-tiering.html#add-cloud-tiering-byol-licenses-to-your-account["Agréguela a su cuenta desde la cartera digital BlueXP"].
+
+
+
+
+== Diagramas de red para las opciones de conexión
+
+Hay dos métodos de conexión que se pueden utilizar al configurar la organización en niveles de los sistemas ONTAP en las instalaciones a AWS S3.
+
+* Conexión pública: Conecte directamente el sistema ONTAP a AWS S3 mediante un extremo público de S3.
+* Conexión privada: Utilice una VPN o AWS Direct Connect y dirija el tráfico a través de una interfaz VPC Endpoint que utilice una dirección IP privada.
+
+
+El siguiente diagrama muestra el método *de conexión pública* y las conexiones que necesita preparar entre los componentes. Puede usar un conector que haya instalado en sus instalaciones o un conector que haya implementado en el VPC de AWS.
+
+image:diagram_cloud_tiering_aws_public.png["Un diagrama muestra cómo Cloud Tiering se comunica a través de una conexión pública con los volúmenes del clúster y el almacenamiento de AWS S3 donde se encuentran los datos inactivos."]
+
+El siguiente diagrama muestra el método *de conexión privada* y las conexiones que necesita preparar entre los componentes. Puede usar un conector que haya instalado en sus instalaciones o un conector que haya implementado en el VPC de AWS.
+
+image:diagram_cloud_tiering_aws_private.png["Un diagrama muestra cómo Cloud Tiering se comunica a través de una conexión privada con los volúmenes del clúster y el almacenamiento de AWS S3 donde se encuentran los datos inactivos."]
+
+
+NOTE: La comunicación entre un conector y S3 es únicamente para la configuración del almacenamiento de objetos.
+
+
+
+== Prepare el conector
+
+El conector BlueXP es el software principal para la funcionalidad BlueXP. Se requiere un conector para organizar en niveles los datos de ONTAP inactivos.
+
+
+
+=== Creación o conmutación de conectores
+
+Si ya tiene un conector puesto en marcha en AWS VPC o en sus instalaciones, todo estará configurado. De lo contrario, necesitará crear un conector en cualquiera de esas ubicaciones para organizar los datos de ONTAP en niveles en el almacenamiento AWS S3. No puede utilizar un conector puesto en marcha en otro proveedor de cloud.
+
+* https://docs.netapp.com/us-en/cloud-manager-setup-admin/concept-connectors.html["Más información sobre conectores"^]
+* https://docs.netapp.com/us-en/cloud-manager-setup-admin/reference-checklist-cm.html["Introducción a conectores"^]
+* https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-creating-connectors-aws.html["Instalación de un conector en AWS"^]
+* https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-installing-linux.html["Instalación de un conector en sus instalaciones"^]
+
+
+
+
+=== Requisitos de conexión a redes del conector
+
+* Asegúrese de que la red en la que está instalado el conector habilita las siguientes conexiones:
++
+** Una conexión a Internet de salida a través del puerto 443 (HTTPS) al servicio Cloud Tiering
+** Una conexión HTTPS a través del puerto 443 al almacenamiento de objetos S3 (https://docs.netapp.com/us-en/cloud-manager-setup-admin/reference-checklist-cm.html["consulte la lista de extremos"^])
+** Una conexión HTTPS a través del puerto 443 para la LIF de gestión del clúster ONTAP
+
+
+* https://docs.netapp.com/us-en/cloud-manager-setup-admin/reference-permissions-aws.html#cloud-tiering["Asegúrese de que Connector tenga permisos para gestionar el bloque S3"^]
+* Si tiene una conexión de conexión directa o VPN desde el clúster de ONTAP al VPC y desea que la comunicación entre el conector y S3 permanezca en su red interna de AWS (una conexión *privada*), tendrá que habilitar una interfaz de extremo VPC a S3. <<Configure el sistema para una conexión privada mediante una interfaz de extremo VPC,Consulte cómo configurar una interfaz de extremo VPC.>>
+
+
+
+
+== Prepare el clúster ONTAP
+
+Los clústeres de ONTAP deben cumplir los siguientes requisitos cuando organizando los datos en niveles en Amazon S3.
+
+
+
+=== Requisitos de ONTAP
+
+Plataformas ONTAP compatibles::
++
+--
+* Al usar ONTAP 9.8 y versiones posteriores: Puede organizar los datos en niveles desde sistemas AFF, o sistemas FAS con agregados íntegramente de SSD o agregados íntegramente de HDD.
+* Al usar ONTAP 9.7 y versiones anteriores: Puede organizar en niveles datos de sistemas AFF o sistemas FAS con agregados compuestos en su totalidad por SSD.
+
+
+--
+Versiones de ONTAP compatibles::
++
+--
+* ONTAP 9.2 o posterior
+* Se requiere ONTAP 9.7 o posterior si tiene pensado utilizar una conexión AWS PrivateLink al almacenamiento de objetos
+
+
+--
+Volúmenes y agregados compatibles:: El número total de volúmenes que puede organizar en niveles en Cloud puede ser menor que el número de volúmenes en su sistema ONTAP. Esto se debe a que los volúmenes no pueden estar organizados en niveles desde algunos agregados. Consulte la documentación de ONTAP para https://docs.netapp.com/us-en/ontap/fabricpool/requirements-concept.html#functionality-or-features-not-supported-by-fabricpool["Funcionalidad o funciones no compatibles con FabricPool"^].
+
+
+
+NOTE: Cloud Tiering admite FlexGroup Volumes empezando por ONTAP 9.5. El programa de instalación funciona igual que cualquier otro volumen.
+
+Parámetro de acceso a aplicaciones necesario:: El usuario administrador del clúster debe tener acceso a “Console” Application. Puede verificarlo con el comando ONTAP `security login show`. "Console" debe aparecer en la columna _Application_ para el usuario "admin". Utilice la `security login create` comando para agregar acceso a la aplicación de consola si es necesario. https://docs.netapp.com/us-en/ontap-cli-9111/security-login-create.html["Consulte los comandos de inicio de sesión de seguridad para obtener más información"].
+
+
+
+
+=== Requisitos para la red de clúster
+
+* El clúster requiere una conexión HTTPS de entrada desde el conector a la LIF de administración del clúster.
++
+No se necesita una conexión entre el clúster y el servicio Cloud Tiering.
+
+* Se requiere una LIF de interconexión de clústeres en cada nodo ONTAP en el que se alojan los volúmenes que se desean organizar. Estas LIF de interconexión de clústeres deben poder acceder al almacén de objetos.
++
+El clúster inicia una conexión HTTPS de salida a través del puerto 443 desde las LIF de interconexión de clústeres hasta el almacenamiento de Amazon S3 para las operaciones de organización en niveles. ONTAP lee y escribe datos en y desde el almacenamiento de objetos. El almacenamiento de objetos no inicia nunca, solo responde.
+
+* Las LIF entre clústeres deben estar asociadas al _IPspace_ que ONTAP debería usar para conectarse al almacenamiento de objetos. https://docs.netapp.com/us-en/ontap/networking/standard_properties_of_ipspaces.html["Obtenga más información acerca de los espacios IP"^].
++
+Cuando configura Cloud Tiering, se le solicita que lo utilice el espacio IP. Debe elegir el espacio IP al que están asociadas estas LIF. Puede ser el espacio IP «predeterminado» o un espacio IP personalizado que haya creado.
+
++
+Si utiliza un espacio IP diferente a la opción "predeterminada", es posible que deba crear una ruta estática para obtener acceso al almacenamiento de objetos.
+
++
+Todas las LIF entre clústeres del espacio IP deben tener acceso al almacén de objetos. Si no puede configurar este espacio IP para el espacio IP actual, deberá crear un espacio IP dedicado en el que todas las LIF de interconexión de clústeres tengan acceso al almacén de objetos.
+
+* Si utiliza un extremo de interfaz VPC privado en AWS para la conexión de S3, para que se pueda usar HTTPS/443, deberá cargar el certificado de extremo S3 en el clúster de ONTAP. <<Configure el sistema para una conexión privada mediante una interfaz de extremo VPC,Consulte cómo configurar una interfaz de extremo de VPC y cargar el certificado de S3.>>
+* <<Configure permisos de S3,Compruebe que su clúster de ONTAP tenga permisos para acceder al bloque de S3.>>
+
+
+
+
+=== Descubra su clúster de ONTAP en BlueXP
+
+Necesita descubrir su clúster de ONTAP en las instalaciones de BlueXP para poder empezar a organizar en niveles los datos inactivos al almacenamiento de objetos. Tendrá que conocer la dirección IP de gestión del clúster y la contraseña de la cuenta de usuario administrador para añadir el clúster.
+
+https://docs.netapp.com/us-en/cloud-manager-ontap-onprem/task-discovering-ontap.html["Aprenda a detectar un clúster"^].
+
+
+
+== Prepare el entorno AWS
+
+Cuando se configura la organización en niveles de datos en un nuevo clúster, se le pedirá que cree un bloque de S3 o que seleccione un bloque de S3 existente en la cuenta de AWS donde se haya configurado el conector. La cuenta de AWS debe tener permisos y una clave de acceso que se puede introducir en Cloud Tiering. El clúster de ONTAP utiliza la clave de acceso para colocar los datos en niveles dentro y fuera de S3.
+
+El bloque de S3 debe estar en una link:reference-aws-support.html#supported-aws-regions["Región que admite Cloud Tiering"].
+
+
+NOTE: Si tiene pensado configurar Cloud Tiering para utilizar una clase de almacenamiento de menor coste en la que sus datos organizados en niveles se moverán al cabo de un determinado número de días, no debe seleccionar ninguna regla de ciclo de vida al configurar el bucket en su cuenta de AWS. La organización en niveles del cloud gestiona las transiciones del ciclo de vida.
+
+
+
+=== Configure permisos de S3
+
+Tendrá que configurar dos conjuntos de permisos:
+
+* Permisos para que el conector cree y gestione el bloque de S3.
+* Permisos para el clúster ONTAP en las instalaciones para que pueda leer y escribir datos en el bloque de S3.
+
+
+.Pasos
+. Confirme eso https://docs.netapp.com/us-en/cloud-manager-setup-admin/reference-permissions-aws.html#cloud-tiering["Estos permisos de S3"^] Forman parte de la función IAM que proporciona permisos al conector. Se deberían haber incluido de forma predeterminada cuando se desplegó el conector por primera vez. De lo contrario, deberá agregar los permisos que faltan. Consulte https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-edit.html["Documentación de AWS: Editar políticas de IAM"^].
+. Al activar el servicio, el asistente de organización en niveles le solicitará que introduzca una clave de acceso y una clave secreta. Estas credenciales se pasan al clúster de ONTAP para que ONTAP pueda organizar los datos en niveles en el bloque de S3. Para ello, deberá crear un usuario de IAM con los siguientes permisos:
++
+[source, json]
+----
+"s3:ListAllMyBuckets",
+"s3:ListBucket",
+"s3:GetBucketLocation",
+"s3:GetObject",
+"s3:PutObject",
+"s3:DeleteObject"
+----
++
+Consulte https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html["Documentación de AWS: Crear un rol para delegar permisos en un usuario de IAM"^] para obtener más detalles.
+
+. Cree o busque la clave de acceso.
++
+La organización en niveles de cloud transfiere la clave de acceso al clúster ONTAP. Las credenciales no se almacenan en el servicio Cloud Tiering.
+
++
+https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html["Documentación de AWS: Gestionar claves de acceso para usuarios de IAM"^]
+
+
+
+
+
+=== Configure el sistema para una conexión privada mediante una interfaz de extremo VPC
+
+Si planea utilizar una conexión a Internet pública estándar, el conector establece todos los permisos y no hay nada más que deba hacer. Este tipo de conexión se muestra en la <<Diagramas de red para las opciones de conexión,primer diagrama anterior>>.
+
+Si desea disponer de una conexión a través de Internet más segura desde el centro de datos local al VPC, hay una opción para seleccionar una conexión de AWS PrivateLink en el asistente de activación de la organización en niveles. Es necesario si planea utilizar una VPN o AWS Direct Connect para conectar su sistema local a través de una interfaz VPC Endpoint que utilice una dirección IP privada. Este tipo de conexión se muestra en la <<Diagramas de red para las opciones de conexión,segundo diagrama superior>>.
+
+. Cree una configuración de extremo de interfaz mediante la consola de Amazon VPC o la línea de comandos. https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html["Consulte detalles sobre el uso de AWS PrivateLink para Amazon S3"^].
+. Modifique la configuración del grupo de seguridad asociada al conector BlueXP. Debe cambiar la política a "personalizada" (desde "acceso completo") y debe hacerlo <<Configure permisos de S3,Añada los permisos necesarios para el conector S3>> como se ha mostrado anteriormente.
++
+image:screenshot_tiering_aws_sec_group.png["Captura de pantalla del grupo de seguridad de AWS asociado con el conector."]
+
++
+Si está utilizando el puerto 80 (HTTP) para la comunicación con el extremo privado, está configurado. Ya puede habilitar Cloud Tiering en el clúster.
+
++
+Si utiliza el puerto 443 (HTTPS) para comunicarse con el extremo privado, debe copiar el certificado del extremo VPC S3 y añadirlo al clúster de ONTAP, como se muestra en los siguientes 4 pasos.
+
+. Obtenga el nombre DNS del extremo desde la consola de AWS.
++
+image:screenshot_endpoint_dns_aws_console.png["Una captura de pantalla del nombre DNS del extremo VPC de la consola de AWS."]
+
+. Obtenga el certificado del extremo VPC S3. Para hacerlo https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-managing-connectors.html#connect-to-the-linux-vm["Iniciar sesión en la máquina virtual que aloja BlueXP Connector"^] y ejecute el siguiente comando. Al introducir el nombre DNS del punto final, agregue “bucket” al principio, reemplazando el “*”:
++
+[source, text]
+----
+[ec2-user@ip-10-160-4-68 ~]$ openssl s_client -connect bucket.vpce-0ff5c15df7e00fbab-yxs7lt8v.s3.us-west-2.vpce.amazonaws.com:443 -showcerts
+----
+. En el resultado de este comando, copie los datos del certificado S3 (todos los datos entre las etiquetas DE CERTIFICADO INICIAL / FINAL, e incluidas):
++
+[source, text]
+----
+Certificate chain
+0 s:/CN=s3.us-west-2.amazonaws.com`
+   i:/C=US/O=Amazon/OU=Server CA 1B/CN=Amazon
+-----BEGIN CERTIFICATE-----
+MIIM6zCCC9OgAwIBAgIQA7MGJ4FaDBR8uL0KR3oltTANBgkqhkiG9w0BAQsFADBG
+…
+…
+GqvbOz/oO2NWLLFCqI+xmkLcMiPrZy+/6Af+HH2mLCM4EsI2b+IpBmPkriWnnxo=
+-----END CERTIFICATE-----
+----
+. Inicie sesión en la CLI del clúster de ONTAP y aplique el certificado que copió con el siguiente comando (reemplace su propio nombre de máquina virtual de almacenamiento):
++
+[source, text]
+----
+cluster1::> security certificate install -vserver <svm_name> -type server-ca
+Please enter Certificate: Press <Enter> when done
+----
+
+
+
+
+== Organice en niveles los datos inactivos del primer clúster en Amazon S3
+
+Después de preparar su entorno AWS, comience a organizar en niveles los datos inactivos del primer clúster.
+
+.Lo que necesitará
+* https://docs.netapp.com/us-en/cloud-manager-ontap-onprem/task-discovering-ontap.html["Un entorno de trabajo en las instalaciones"^].
+* Una clave de acceso de AWS para un usuario de IAM que tiene los permisos de S3 necesarios.
+
+
+.Pasos
+. Seleccione el entorno de trabajo de ONTAP en las instalaciones.
+. Haga clic en *Activar* para el servicio Tiering desde el panel derecho.
++
+Si el destino de organización en niveles de Amazon S3 existe como entorno de trabajo en Canvas, puede arrastrar el clúster al entorno de trabajo para iniciar el asistente de configuración.
+
++
+image:screenshot_setup_tiering_onprem.png["Captura de pantalla que muestra la opción Activar que aparece en la parte derecha de la pantalla después de seleccionar un entorno de trabajo ONTAP en las instalaciones."]
+
+. *Definir nombre de almacenamiento de objetos*: Escriba un nombre para este almacenamiento de objetos. Debe ser único de cualquier otro almacenamiento de objetos que pueda usar con agregados en este clúster.
+. *Seleccionar proveedor*: Seleccione *Amazon Web Services* y haga clic en *continuar*.
++
+image:screenshot_tiering_aws_s3_bucket.png["Una captura de pantalla que muestra los datos que se deben proporcionar para configurar la organización en niveles en un bloque de S3."]
+
+. Complete las secciones de la página *Crear almacenamiento de objetos*:
++
+.. *S3 Bucket*: Agregue un nuevo bucket de S3 o seleccione un bloque de S3 existente que empiece por el prefijo _Fabric-pool_, seleccione la región de la cuchara y haga clic en *Continue*.
++
+Cuando se usa un conector en las instalaciones, debe introducir el identificador de cuenta de AWS que proporciona acceso al bloque de S3 existente o al nuevo bloque de S3 que se creará.
+
++
+Se requiere el prefijo _Fabric-pool_ porque la política IAM del conector permite a la instancia realizar acciones S3 en bloques denominados con ese prefijo exacto. Por ejemplo, se puede asignar un nombre al bloque de S3 _Fabric-pool-AFF1_, donde AFF1 es el nombre del clúster.
+
+.. *Clase de almacenamiento*: Cloud Tiering gestiona las transiciones del ciclo de vida de sus datos organizados por niveles. Los datos se inician en la clase _Standard_, pero puede crear una regla para mover los datos a otra clase después de un determinado número de días.
++
+Seleccione la clase de almacenamiento S3 a la que desea transferir los datos organizados por niveles y el número de días antes de que se muevan los datos y haga clic en *continuar*. Por ejemplo, la siguiente captura de pantalla muestra que los datos organizados en niveles se mueven de la clase _Standard_ a la clase _Standard-IA_ después de 45 días en el almacenamiento de objetos.
+
++
+Si elige *mantener datos en esta clase de almacenamiento*, los datos permanecerán en la clase de almacenamiento _Standard_ y no se aplicarán reglas. link:reference-aws-support.html["Consulte las clases de almacenamiento compatibles"^].
+
++
+image:screenshot_tiering_lifecycle_selection_aws.png["Una captura de pantalla que muestra cómo seleccionar otra clase de almacenamiento en la que los datos se mueven después de un cierto número de días."]
+
++
+Tenga en cuenta que la regla de ciclo de vida se aplica a todos los objetos del cucharón seleccionado.
+
+.. *Credenciales*: Introduzca el ID de clave de acceso y la clave secreta para un usuario IAM que tenga los permisos S3 necesarios y haga clic en *continuar*.
++
+El usuario IAM debe estar en la misma cuenta de AWS que el bloque que ha seleccionado o creado en la página *S3 Bucket*.
+
+.. *Networking*: Introduzca los detalles de la red y haga clic en *continuar*.
++
+Seleccione el espacio IP en el clúster de ONTAP donde residen los volúmenes que desea organizar en niveles. Las LIF entre clústeres de este espacio IP deben tener acceso a Internet saliente para que puedan conectarse al almacenamiento de objetos de su proveedor de cloud.
+
++
+Si lo desea, puede elegir si va a utilizar un AWS PrivateLink que haya configurado previamente. <<Configure el sistema para una conexión privada mediante una interfaz de extremo VPC,Consulte la información de configuración anterior.>>
+
++
+Aparecerá un cuadro de diálogo que le ayudará a guiarle a través de la configuración del punto final.
+
+
+
+. En la página _Tier Volumes_, seleccione los volúmenes para los que desea configurar la organización en niveles e inicie la página Tiering Policy:
++
+** Para seleccionar todos los volúmenes, active la casilla de la fila de título (image:button_backup_all_volumes.png[""]) Y haga clic en *Configurar volúmenes*.
+** Para seleccionar varios volúmenes, active la casilla de cada volumen (image:button_backup_1_volume.png[""]) Y haga clic en *Configurar volúmenes*.
+** Para seleccionar un único volumen, haga clic en la fila (o. image:screenshot_edit_icon.gif["editar icono de lápiz"] ) para el volumen.
++
+image:screenshot_tiering_tier_volumes.png["Una captura de pantalla que muestra cómo seleccionar un único volumen, varios volúmenes o todos los volúmenes y el botón Modificar volúmenes seleccionados."]
+
+
+
+. En el cuadro de diálogo _Tiering Policy_, seleccione una política de organización en niveles, ajuste opcionalmente los días de refrigeración de los volúmenes seleccionados y haga clic en *aplicar*.
++
+link:concept-cloud-tiering.html#volume-tiering-policies["Obtenga más información acerca de las políticas de organización en niveles de volumen y los días de refrigeración"].
+
++
+image:screenshot_tiering_policy_settings.png["Captura de pantalla que muestra la configuración de la política de organización en niveles configurable."]
+
+
+
+.Resultado
+Ha configurado correctamente la organización en niveles de datos de los volúmenes del clúster en el almacenamiento de objetos S3.
+
+.El futuro
+link:task-licensing-cloud-tiering.html["Asegúrese de suscribirse al servicio de organización en niveles de cloud"].
+
+Puede revisar información acerca de los datos activos e inactivos en el clúster. link:task-managing-tiering.html["Más información sobre la gestión de la configuración de organización en niveles"].
+
+También puede crear más almacenamiento de objetos en casos en los que puede que desee organizar los datos en niveles de ciertos agregados en un clúster en almacenes de objetos diferentes. O si tiene pensado utilizar la función FabricPool Mirroring en la que los datos organizados por niveles se replican en un almacén de objetos adicional. link:task-managing-object-storage.html["Obtenga más información sobre la gestión de almacenes de objetos"].

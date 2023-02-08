@@ -1,0 +1,115 @@
+---
+sidebar: sidebar 
+permalink: whats-new.html 
+keywords: 'what"s new, features, new, release notes, bugs, limitations, known issues, enhancements, fixes, tiering' 
+summary: Descubra las novedades de Cloud Tiering. 
+---
+= Novedades de Cloud Tiering
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Descubra las novedades de Cloud Tiering.
+
+
+
+== 6 de diciembre de 2022
+
+
+
+=== Cambios de extremo de acceso saliente a Internet del conector
+
+Debido a un cambio en la organización en niveles del cloud, debe cambiar los siguientes extremos de conector para que la operación de organización en niveles del cloud se realice correctamente:
+
+[cols="50,50"]
+|===
+| Extremo antiguo | Nuevo extremo 
+
+
+| \https://cloudmanager.cloud.netapp.com | \https://api.bluexp.netapp.com 
+
+
+| \https://*.cloudmanager.cloud.netapp.com | \https://*.api.bluexp.netapp.com 
+|===
+Vea la lista completa de puntos finales de la https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-creating-connectors-aws.html#outbound-internet-access["AWS"^], https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-creating-connectors-gcp.html#outbound-internet-access["Google Cloud"^], o. https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-creating-connectors-azure.html#outbound-internet-access["Azure"^] de cloud híbrido.
+
+
+
+== 6 de noviembre de 2022
+
+
+
+=== Arrastre y suelte para habilitar Cloud Tiering en Azure Blob, Google Cloud Storage y StorageGRID
+
+Si el destino de Azure Blob, Google Cloud Storage o StorageGRID Tiering existe como entorno de trabajo en el lienzo, puede arrastrar su entorno de trabajo ONTAP local al destino para iniciar el asistente de configuración de la organización en niveles.
+
+
+
+== 19 de septiembre de 2022
+
+
+
+=== El asistente de organización en niveles permite configurar AWS PrivateLink cuando la organización en niveles se encuentra en un almacenamiento S3
+
+En versiones anteriores, era muy lento proporcionar esta forma segura de conectar el clúster a un bloque de S3 a través de un extremo de VPC. Ahora puede seguir los pasos de los requisitos previos a. https://docs.netapp.com/us-en/cloud-manager-tiering/task-tiering-onprem-aws.html#configure-your-system-for-a-private-connection-using-a-vpc-endpoint-interface["Configure el sistema para una conexión privada mediante una interfaz de extremo VPC"]Y, a continuación, puede seleccionar PrivateLink durante el asistente de configuración de capas en la página Networking.
+
+https://docs.netapp.com/us-en/cloud-manager-tiering/task-tiering-onprem-aws.html["Revise los requisitos y los pasos para organizar los datos inactivos en niveles en Amazon S3"].
+
+
+
+=== Arrastre y suelte para habilitar Cloud Tiering en Amazon S3
+
+Si el destino de organización en niveles de Amazon S3 existe como entorno de trabajo en Canvas, puede arrastrar el entorno de trabajo de ONTAP local al destino para iniciar el asistente de configuración de organización en niveles.
+
+
+
+=== Elija el comportamiento de organización en niveles al eliminar el almacén de objetos reflejados en una configuración de MetroCluster
+
+Al quitar el almacén de objetos de réplica de una configuración de MetroCluster, se le preguntará si desea quitar también el almacén de objetos principal. Puede optar por mantener el almacén de objetos principal Unido al agregado o eliminarlo.
+
+
+
+== 3 de agosto de 2022
+
+
+
+=== Capacidad de configurar almacenes de objetos adicionales para otros agregados del clúster
+
+La interfaz de usuario de organización en niveles en el cloud ha añadido un nuevo conjunto de páginas para la configuración del almacenamiento de objetos. Puede añadir almacenes de objetos nuevos, conectar varios almacenes de objetos a un agregado para mirroring FabricPool, cambiar los almacenes de objetos primario y de reflejo, eliminar conexiones de almacén de objetos a agregados, etc. https://docs.netapp.com/us-en/cloud-manager-tiering/task-managing-object-storage.html["Más información acerca de la nueva funcionalidad de almacenamiento de objetos."]
+
+
+
+=== Compatibilidad con licencias de Cloud Tiering para configuraciones de MetroCluster
+
+Las licencias de Cloud Tiering ahora se pueden compartir con los clústeres que se encuentran en configuraciones de MetroCluster. Ya no es necesario utilizar las licencias de FabricPool obsoletas para estos casos. De este modo, es más fácil usar las licencias "flotantes" en el cloud Tiering en más clústeres. https://docs.netapp.com/us-en/cloud-manager-tiering/task-licensing-cloud-tiering.html#apply-cloud-tiering-licenses-to-clusters-in-special-configurations["Consulte cómo se License y se configuran estos tipos de clústeres."]
+
+
+
+== 3 de mayo de 2022
+
+
+
+=== Compatibilidad con licencias de Cloud Tiering para configuraciones de clúster adicionales
+
+Las licencias de Cloud Tiering ahora se pueden compartir con los clústeres que se encuentran en configuraciones de Tiering Mirror (no incluidas las configuraciones de MetroCluster) y con clústeres organizados en niveles en IBM Cloud Object Storage. Ya no es necesario utilizar las licencias de FabricPool obsoletas para estos casos. De este modo, es más fácil usar las licencias "flotantes" en el cloud Tiering en más clústeres. https://docs.netapp.com/us-en/cloud-manager-tiering/task-licensing-cloud-tiering.html#apply-cloud-tiering-licenses-to-clusters-in-special-configurations["Consulte cómo se License y se configuran estos tipos de clústeres."]
+
+
+
+== 4 de abril de 2022
+
+
+
+=== La clase de almacenamiento de recuperación instantánea de Amazon S3 Glacier ya está disponible
+
+Al configurar Cloud Tiering, ahora puede configurar una regla de ciclo de vida para que los datos inactivos se traspasar de la clase de almacenamiento _Standard_ a _Glacier Instant Retrieval_ después de un determinado número de días. Esto le ayudará a reducir los costes de infraestructura de AWS. https://docs.netapp.com/us-en/cloud-manager-tiering/reference-aws-support.html["Consulte las clases de almacenamiento S3 admitidas."]
+
+
+
+=== Cloud Tiering ha estado completamente cualificado en sistemas ONTAP Select
+
+Además de organizar en niveles los datos de sus sistemas AFF y FAS, ahora puede organizar en niveles los datos inactivos de sus sistemas ONTAP Select en el almacenamiento en cloud.

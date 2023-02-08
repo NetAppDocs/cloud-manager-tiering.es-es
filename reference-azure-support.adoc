@@ -1,0 +1,35 @@
+---
+sidebar: sidebar 
+permalink: reference-azure-support.html 
+keywords: microsoft azure, azure, hot, access tier, cold, regions 
+summary: Cloud Tiering admite dos niveles de acceso y la mayoría de regiones. 
+---
+= Niveles de acceso de Azure Blob y regiones compatibles
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Cloud Tiering admite dos niveles de acceso y la mayoría de regiones.
+
+
+
+== Niveles de acceso de Azure Blob compatibles
+
+Cuando configura la organización en niveles de datos en Azure, Cloud Tiering utiliza automáticamente el nivel de acceso _Hot_ para los datos inactivos. La organización en niveles del cloud puede aplicar una regla de ciclo de vida para que los datos se transiciones desde el nivel de acceso _Hot_ al nivel de acceso _Cool_ tras un cierto número de días.
+
+Si no elige el nivel de acceso _Cool_, los datos permanecerán en el nivel de acceso _Hot_ y no se aplicarán reglas.
+
+Cuando configura una regla del ciclo de vida de Cloud Tiering, no debe configurar ninguna regla del ciclo de vida al configurar el contenedor en su cuenta de Azure.
+
+https://docs.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview["Obtenga más información acerca de los niveles de acceso de Azure Blob"^].
+
+
+
+== Regiones de Azure compatibles
+
+El almacenamiento en niveles de cloud admite el almacenamiento en niveles en cualquier cuenta de almacenamiento de cualquier región a la que se pueda acceder a través de Connector.

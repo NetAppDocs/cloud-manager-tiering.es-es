@@ -1,0 +1,6 @@
+= 
+:allow-uri-read: 
+
+
+Parámetro de acceso a aplicaciones necesario:: El usuario administrador del clúster debe tener acceso a “Console” Application. Puede verificarlo con el comando ONTAP `security login show`. "Console" debe aparecer en la columna _Application_ para el usuario "admin". Utilice la `security login create` comando para agregar acceso a la aplicación de consola si es necesario. https://docs.netapp.com/us-en/ontap-cli-9111/security-login-create.html["Consulte los comandos de inicio de sesión de seguridad para obtener más información"].
+

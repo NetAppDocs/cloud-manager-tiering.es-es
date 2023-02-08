@@ -1,0 +1,519 @@
+---
+sidebar: sidebar 
+permalink: faq-cloud-tiering.html 
+keywords: faq, questions, requirements, service connector, object store, object storage, aws, azure, bucket, cluster, aggregate, s3, storage class, standard, inactive data reporting, auto, volume tiering policy, policy, tiering policy, snapshot, cold, inactive, infrequent 
+summary: Estas preguntas frecuentes pueden ser de ayuda si solo está buscando una respuesta rápida a una pregunta. 
+---
+= Preguntas técnicas frecuentes sobre la organización en niveles del cloud
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Estas preguntas frecuentes pueden ser de ayuda si solo está buscando una respuesta rápida a una pregunta.
+
+
+
+== Servicio de organización en niveles de cloud
+
+Las siguientes preguntas frecuentes hacen referencia al funcionamiento de Cloud Tiering.
+
+
+
+=== ¿Cuáles son las ventajas de usar el servicio de organización en niveles del cloud?
+
+La organización en niveles de cloud ofrece respuesta a los retos que conlleva un rápido crecimiento de datos, y ofrece ventajas como:
+
+* Extensión sencilla del centro de datos al cloud, proporcionando hasta 50 veces más espacio
+* Optimización del almacenamiento, lo que proporciona un ahorro medio en almacenamiento del 70%
+* Se ha reducido el coste total de propiedad en un 30% de media
+* No es necesario refactorizar las aplicaciones
+
+
+
+
+=== ¿Qué tipo de datos son útiles para organizar en niveles en el cloud?
+
+Básicamente, cualquier dato que se considere inactivo en sistemas de almacenamiento primario y secundario es un buen objetivo para moverse a la nube. En los sistemas primarios, dichos datos pueden incluir instantáneas, registros históricos y proyectos terminados. En sistemas secundarios, esto incluye todos los volúmenes que contienen copias de datos primarios realizados con fines de recuperación ante desastres y backup.
+
+
+
+=== ¿Puedo organizar en niveles los datos de volúmenes NAS y SAN?
+
+Sí, puede organizar los datos en niveles desde NAS Volumes en el cloud público o en clouds privados, como StorageGRID. En el caso de la organización en niveles de los datos a los que se accede mediante protocolos SAN, NetApp recomienda utilizar clouds privados, ya que LOS protocolos SAN son más sensibles que NAS.
+
+
+
+=== ¿Cuál es la definición de datos inactivos o datos que se usan con poca frecuencia y cómo se controla esto?
+
+La definición de lo que también se puede hacer referencia a los datos inactivos es: "Bloques de volúmenes (metadatos excluidos) a los que no se ha accedido durante cierto tiempo". La “cantidad de tiempo” está determinada por un atributo de política de organización en niveles denominado refrigerantes-días.
+
+
+
+=== ¿Mantendrá el almacenamiento por niveles el cloud mis ahorros de eficiencia del almacenamiento en el nivel de cloud?
+
+Sí, las eficiencias del almacenamiento en el nivel de volumen de ONTAP, como la compresión, la deduplicación y la compactación, se conservan cuando se mueven los datos al nivel de cloud.
+
+
+
+=== ¿Cuál es la diferencia entre FabricPool y Cloud Tiering?
+
+FabricPool es la tecnología de organización en niveles de ONTAP que se puede gestionar automáticamente a través de la interfaz de línea de comandos de ONTAP y System Manager, o bien gestionar como servicio mediante Cloud Tiering. Cloud Tiering convierte a FabricPool en un servicio gestionado con procesos de automatización avanzados, tanto en ONTAP como en el cloud, lo que proporciona una mayor visibilidad y control sobre la organización en niveles en puestas en marcha híbridas y de múltiples clouds.
+
+
+
+=== ¿Los datos organizados por niveles en el cloud pueden utilizarse para recuperación ante desastres o para backup o archivado?
+
+No Dado que los metadatos del volumen nunca se organizan en niveles desde el nivel de rendimiento, no se puede acceder directamente a los datos almacenados en el almacenamiento de objetos.
+
+Sin embargo, Cloud Tiering puede utilizarse para lograr un backup y una recuperación ante desastres rentables, ya que se pueden habilitar en sistemas secundarios y volúmenes de destino de SnapMirror (volúmenes DP) para almacenar por niveles todos los datos (metadatos excluidos) y reducir así el espacio del centro de datos y el coste total de propiedad.
+
+
+
+=== ¿La organización en niveles del cloud se aplica a nivel de volumen o agregado?
+
+La organización en niveles de cloud se habilita en el nivel de volumen, pues se asocia una política de organización en niveles con cada volumen. La identificación de datos inactivos se realiza a nivel de bloque.
+
+
+
+=== ¿Cómo determina Cloud Tiering qué bloques se van a organizar en niveles en el cloud?
+
+La política de organización en niveles asociada con el volumen es el mecanismo que controla qué bloques se organizan en niveles y cuándo. La política define el tipo de bloques de datos (snapshots, datos de usuarios o ambos) y el período de refrigeración. Consulte link:concept-cloud-tiering.html#volume-tiering-policies["Políticas de organización en niveles del volumen"] para obtener más detalles.
+
+
+
+=== ¿Cómo afecta la organización en niveles de cloud a la capacidad de volumen?
+
+La organización en niveles del cloud no afecta a la capacidad del volumen, sino más bien al uso del nivel de rendimiento del agregado.
+
+
+
+=== ¿La organización por niveles del cloud habilita los informes de datos inactivos?
+
+Sí, Cloud Tiering permite la generación de informes de datos inactivos (IDR) en cada agregado. Este ajuste nos permite identificar la cantidad de datos inactivos que se pueden organizar en niveles en almacenamiento de objetos de bajo coste.
+
+
+
+=== ¿Cuánto tiempo tarda IDR en mostrar información desde el momento en que comienzo a ejecutarla?
+
+IDR comienza a mostrar información una vez transcurrido el período de enfriamiento configurado. Con ONTAP 9.7 y anteriores, IDR tenía un período de enfriamiento no ajustable de 31 días. A partir de ONTAP 9.8, el periodo de refrigeración IDR se puede configurar hasta 183 días.
+
+
+
+== Licencias y costes
+
+Las siguientes preguntas frecuentes hacen referencia a las licencias y los costes de uso de Cloud Tiering.
+
+
+
+=== ¿Cuánto cuesta usar la organización en niveles de cloud?
+
+Cuando organización en niveles de datos fríos en un cloud público:
+
+* Para la suscripción de pago por uso (PAYGO) basada en el uso: 0.05 $ por GB/mes.
+* Para la suscripción anual (BYOL) basada en periodos: A partir de 0.033 $ por GB/mes.
+
+
+Cuando se organiza la organización en niveles de los datos fríos en un sistema StorageGRID de NetApp (cloud privado), sin coste alguno.
+
+
+
+=== ¿Puedo tener una licencia BYOL y PAYGO para el mismo clúster de ONTAP?
+
+Sí. Cloud Tiering le permite usar una licencia BYOL, una suscripción PAYGO o una combinación de ambos.
+
+
+
+=== ¿Qué sucede si he alcanzado el límite de capacidad de su licencia?
+
+Si alcanza un límite de capacidad BYOL, la organización en niveles de nuevos datos fríos se detiene mientras todos los datos organizados en niveles anteriormente siguen siendo accesibles. Si tiene una suscripción a PAYGO Marketplace del _BlueXP - Deploy & Manage Cloud Data Services_, los nuevos datos inactivos seguirán estando organizados en niveles en el almacenamiento de objetos y pagará por cada uso.
+
+
+
+=== ¿La licencia de Cloud Tiering incluye las tarifas de salida del proveedor de cloud?
+
+No, no lo hace.
+
+
+
+=== ¿La rehidratación de sistemas en las instalaciones está sujeta al coste de salida que pagan los proveedores de cloud?
+
+Sí. Todas las lecturas del cloud público están sujetas a tarifas de salida.
+
+
+
+=== ¿Cómo puedo calcular los cargos que cobra el cloud? ¿Existe un modo de “qué sucede si” para la organización en niveles de cloud?
+
+La mejor forma de estimar cuánto cobrará un proveedor de cloud por alojar sus datos es utilizar sus calculadoras: https://calculator.aws/#/["AWS"], https://azure.microsoft.com/en-us/pricing/calculator/["Azure"] y.. https://cloud.google.com/products/calculator["Google Cloud"].
+
+
+
+=== ¿Hay algún coste adicional por parte de los proveedores de cloud para leer/recuperar datos del almacenamiento de objetos al almacenamiento local?
+
+Sí. Comprobar https://aws.amazon.com/s3/pricing/["Precios de Amazon S3"], https://azure.microsoft.com/en-us/pricing/details/storage/blobs/["Precios de Block Blob"], y. https://cloud.google.com/storage/pricing["Precios de almacenamiento de cloud"] para obtener precios adicionales derivados de la lectura y recuperación de datos.
+
+
+
+=== ¿Cómo puedo calcular el ahorro que han obtenido mis volúmenes y obtener un informe de datos inactivos antes de habilitar Cloud Tiering?
+
+Para obtener una estimación, basta con añadir un clúster de ONTAP a BlueXP e inspeccionarlo a través de la consola de Cloud Tiering Clusters, que se encuentra en la pestaña Tiering. Cuando se deshabilita la función de generación de informes de datos inactivos (IDR) o aún no se ha activado durante un periodo de tiempo suficiente, Cloud Tiering utiliza una constante del sector del 70 % para calcular el ahorro estimado. Una vez disponibles los datos de IDR, Cloud Tiering actualiza los ahorros para obtener cifras precisas.
+
+
+
+== ONTAP
+
+Las siguientes preguntas hacen referencia a ONTAP.
+
+
+
+=== ¿Qué versiones de ONTAP es compatible con Cloud Tiering?
+
+Cloud Tiering admite ONTAP 9.2 y versiones posteriores.
+
+
+
+=== ¿Qué tipos de sistemas ONTAP son compatibles?
+
+Cloud Tiering es compatible con clústeres de un único nodo y de alta disponibilidad de AFF, FAS y ONTAP Select. También se admiten los clústeres de las configuraciones de FabricPool Mirror y las configuraciones de MetroCluster.
+
+
+
+=== ¿Puedo organizar los datos en niveles desde sistemas FAS solo con HDD?
+
+Sí, desde ONTAP 9.8 puede organizar los datos en niveles de los volúmenes alojados en agregados de HDD.
+
+
+
+=== ¿Puedo organizar los datos en niveles desde un AFF Unido a un clúster que tiene nodos FAS con HDD?
+
+Sí. El nivel de cloud puede configurarse para organizar los volúmenes alojados en cualquier agregado. La configuración de organización en niveles de los datos es irrelevante para el tipo de controladora que se utiliza y si el clúster es heterogéneo o no.
+
+
+
+=== ¿y Cloud Volumes ONTAP?
+
+Si tiene sistemas Cloud Volumes ONTAP, los encontrará en el Cloud Tiering Cluster Dashboard para que obtenga una vista completa de la organización en niveles de los datos en su infraestructura de cloud híbrido. Sin embargo, los sistemas Cloud Volumes ONTAP son de solo lectura de la organización en niveles del cloud. No se puede configurar la organización en niveles de datos en Cloud Volumes ONTAP desde la organización en niveles del cloud. https://docs.netapp.com/us-en/cloud-manager-cloud-volumes-ontap/task-tiering.html["Ha configurado una organización en niveles para Cloud Volumes ONTAP desde el entorno de trabajo de BlueXP"^].
+
+
+
+=== ¿Qué otros requisitos son necesarios para mis clústeres de ONTAP?
+
+Depende del lugar en el que organice los datos inactivos. Consulte los siguientes enlaces para obtener más información:
+
+* link:task-tiering-onprem-aws.html#prepare-your-ontap-cluster["Organización en niveles de los datos para Amazon S3"]
+* link:task-tiering-onprem-azure.html#preparing-your-ontap-clusters["Organización de los datos en niveles en el almacenamiento de Azure Blob"]
+* link:task-tiering-onprem-gcp.html#preparing-your-ontap-clusters["Organización de los datos en niveles en Google Cloud Storage"]
+* link:task-tiering-onprem-storagegrid.html#preparing-your-ontap-clusters["Organización de los datos en niveles en StorageGRID"]
+* link:task-tiering-onprem-s3-compat.html#preparing-your-ontap-clusters["Organización en niveles de los datos en el almacenamiento de objetos S3"]
+
+
+
+
+== Almacenamiento de objetos
+
+Las siguientes preguntas están relacionadas con el almacenamiento de objetos.
+
+
+
+=== ¿Qué proveedores de almacenamiento de objetos son compatibles?
+
+Cloud Tiering admite los siguientes proveedores de almacenamiento de objetos:
+
+* Amazon S3
+* Microsoft Azure Blob
+* Google Cloud Storage
+* StorageGRID de NetApp
+* Almacenamiento de objetos compatible con S3
+* IBM Cloud Object Storage (la configuración de FabricPool debe realizarse mediante System Manager o la CLI de ONTAP)
+
+
+
+
+=== ¿Puedo usar mi propio contenedor/cucharón?
+
+Sí, puedes. Cuando configura la organización en niveles de datos, tiene la opción de añadir un nuevo bloque/contenedor o seleccionar un bloque/contenedor existente.
+
+
+
+=== ¿Qué regiones son compatibles?
+
+* link:reference-aws-support.html["Regiones admitidas de AWS"]
+* link:reference-azure-support.html["Regiones de Azure compatibles"]
+* link:reference-google-support.html["Regiones compatibles de Google Cloud"]
+
+
+
+
+=== ¿Qué clases de almacenamiento S3 son compatibles?
+
+La organización en niveles de la nube admite la organización en niveles de datos en las clases de almacenamiento _Standard_, _Standard-Infrecuente Access_, _One Zone-Infrecuente Access_, _Intelligent Tiering_ y _Glacier Instant Retrieval_. Consulte link:reference-aws-support.html["Clases de almacenamiento S3 compatibles"] para obtener más detalles.
+
+
+
+=== ¿Por qué la organización en niveles del cloud no es compatible con la solución flexible y la archivo profundo de S3 Glacier?
+
+El motivo principal por el que Amazon S3 Glacier flexible y S3 Glacier Deep Archive no son compatibles es que Cloud Tiering está diseñado como una solución de organización en niveles de alto rendimiento, de forma que los datos deben estar disponibles de forma continua y ser accesibles rápidamente para su recuperación. Con S3 Glacier flexible y S3 Glacier Deep Archive, la recuperación de datos puede durar entre unos pocos minutos y 48 horas.
+
+
+
+=== ¿Puedo usar otros servicios de almacenamiento de objetos compatibles con S3, como Wasabi, con niveles en el cloud?
+
+Sí, la configuración de un almacenamiento de objetos compatible con S3 a través de la interfaz de usuario de organización en niveles es compatible con los clústeres que utilizan ONTAP 9.8 y versiones posteriores. link:task-tiering-onprem-s3-compat.html["Consulte los detalles aquí"].
+
+
+
+=== ¿Qué niveles de acceso de Azure Blob son compatibles?
+
+El cloud por niveles admite la organización en niveles de datos en los niveles de acceso _Hot_ o _Cool_ para los datos inactivos. Consulte link:reference-azure-support.html["Niveles de acceso de Azure Blob compatibles"] para obtener más detalles.
+
+
+
+=== ¿Qué clases de almacenamiento son compatibles con Google Cloud Storage?
+
+Cloud Tiering admite la organización en niveles de los datos en las clases de almacenamiento _Standard_, _Nearline_, _Coldline_ y _Archive_. Consulte link:reference-google-support.html["Clases de almacenamiento compatibles con Google Cloud"] para obtener más detalles.
+
+
+
+=== ¿Admite la organización en niveles el cloud el uso de políticas de gestión del ciclo de vida?
+
+Sí. Puede habilitar la gestión del ciclo de vida para que Cloud Tiering pase los datos del nivel de acceso/clase de almacenamiento predeterminado a un nivel más rentable tras un cierto número de días. La regla del ciclo de vida se aplica a todos los objetos del bloque seleccionado para el almacenamiento Amazon S3 y Google Cloud, y a todos los contenedores de la cuenta de almacenamiento seleccionada para Azure Blob.
+
+
+
+=== ¿Cloud Tiering usa un almacén de objetos para todo el clúster o uno por agregado?
+
+En una configuración típica hay un almacén de objetos para todo el clúster. A partir de agosto de 2022, puede utilizar la página *Configuración avanzada* para agregar almacenes de objetos adicionales para un clúster y, a continuación, asociar almacenes de objetos diferentes a agregados diferentes, o adjuntar 2 almacenes de objetos a un agregado para el mirroring.
+
+
+
+=== ¿Se pueden adjuntar varios bloques al mismo agregado?
+
+Es posible conectar hasta dos bloques por agregado con el fin de reflejar, en los que los datos inactivos se organizan en niveles de forma síncrona en ambos bloques. Los cucharones pueden ser de diferentes proveedores y ubicaciones diferentes. A partir de agosto de 2022, puede utilizar la página *Configuración avanzada* para adjuntar dos almacenes de objetos a un solo agregado.
+
+
+
+=== ¿Se pueden conectar distintos bloques a distintos agregados en el mismo clúster?
+
+Sí. La mejor práctica general es conectar un solo bloque a varios agregados. Sin embargo, cuando se utiliza el cloud público, hay una limitación máxima de IOPS para los servicios de almacenamiento de objetos, por lo que deben tenerse en cuenta varios bloques.
+
+
+
+=== ¿Qué sucede con los datos organizados en niveles al migrar un volumen de un clúster a otro?
+
+Al migrar un volumen de un clúster a otro, se leen todos los datos inactivos del nivel de cloud. La ubicación de escritura del clúster de destino depende de si la organización en niveles se haya habilitado y el tipo de política de organización en niveles que se haya utilizado en los volúmenes de origen y destino.
+
+
+
+=== ¿Qué sucede con los datos organizados en niveles al mover un volumen de un nodo a otro en el mismo clúster?
+
+Si el agregado de destino no tiene un nivel de cloud asociado, los datos se leen desde el nivel de cloud del agregado de origen y se escriben completamente en el nivel local del agregado de destino. Si el agregado de destino tiene un nivel de cloud asociado, los datos se leen desde el nivel de cloud del agregado de origen y se escriben por primera vez en el nivel local del agregado de destino para facilitar una transición rápida. Más adelante, en función de la política de organización en niveles utilizada, se escribe en el nivel de cloud.
+
+A partir de ONTAP 9.6, si el agregado de destino utiliza el mismo nivel de cloud que el agregado de origen, los datos inactivos no se moverán al nivel local.
+
+
+
+=== ¿Cómo puedo devolver mis datos organizados por niveles a las instalaciones al nivel de rendimiento?
+
+La devolución de escritura se realiza por lo general en lecturas y depende del tipo de política de organización en niveles. Antes de ONTAP 9.8, la reescritura de todo el volumen se puede realizar con una operación _volume move_. A partir de ONTAP 9.8, la interfaz de usuario de Tiering tiene opciones para *recuperar todos los datos* o *recuperar el sistema de archivos activo*. link:task-managing-tiering.html#migrating-data-from-the-cloud-tier-back-to-the-performance-tier["Vea cómo se devuelven los datos al nivel de rendimiento"].
+
+
+
+=== Al sustituir una controladora AFF/FAS existente por otra nueva, ¿los datos organizados en niveles se migrarían de nuevo a las instalaciones?
+
+No Durante el procedimiento de “cambio de cabezal”, lo único que cambia es la propiedad del agregado. En este caso, se cambiará a la nueva controladora sin necesidad de mover datos.
+
+
+
+=== ¿Puedo usar la consola del proveedor de cloud o los exploradores del almacenamiento de objetos para examinar los datos organizados en niveles en un bloque? ¿Puedo utilizar los datos almacenados en el almacenamiento de objetos directamente sin ONTAP?
+
+No Los objetos construidos y organizados en niveles en cloud no contienen un solo archivo, sino hasta 1,024 bloques de 4 KB de varios archivos. Los metadatos de un volumen siempre permanecen en el nivel local.
+
+
+
+== Conectores
+
+Las siguientes preguntas se refieren al conector BlueXP.
+
+
+
+=== ¿Qué es el conector?
+
+Connector es un software que se ejecuta en una instancia informática dentro de su cuenta cloud o en las instalaciones, que permite a BlueXP gestionar de forma segura los recursos cloud. Para utilizar el servicio Cloud Tiering, debe poner en marcha un conector.
+
+
+
+=== ¿Dónde se debe instalar el conector?
+
+* Al organizar en niveles los datos en S3, el conector puede residir en un VPC de AWS o en las instalaciones.
+* Al organizar los datos en niveles en el almacenamiento BLOB, el conector puede residir en una red virtual de Azure o en sus instalaciones.
+* Al organizar los datos en niveles en Google Cloud Storage, el conector debe residir en un VPC de Google Cloud Platform.
+* Al organizar los datos en niveles en StorageGRID u otros proveedores de almacenamiento compatibles con S3, el conector debe residir en sus instalaciones.
+
+
+
+
+=== ¿Puedo desplegar el conector en las instalaciones?
+
+Sí. El software Connector se puede descargar e instalar manualmente en un host Linux de la red. https://docs.netapp.com/us-en/cloud-manager-setup-admin/task-installing-linux.html["Vea cómo instalar el conector en sus instalaciones"].
+
+
+
+=== ¿Es necesaria una cuenta con un proveedor de servicios de cloud antes de usar Cloud Tiering?
+
+Sí. Es necesario tener una cuenta para poder definir el almacenamiento de objetos que desea utilizar. Al configurar el conector en el cloud en un VPC o vnet, también se necesita una cuenta con un proveedor de almacenamiento en cloud.
+
+
+
+=== ¿Cuáles son las implicaciones si el conector falla?
+
+En caso de fallo del conector, solo se ve afectada la visibilidad de los entornos organizados en niveles. Todos los datos son accesibles y los datos inactivos recién identificados se organizan automáticamente en niveles para el almacenamiento de objetos.
+
+
+
+== Políticas de organización en niveles
+
+
+
+=== ¿Cuáles son las políticas de organización en niveles disponibles?
+
+Existen cuatro políticas de organización en niveles:
+
+* Ninguno: Clasifica todos los datos como siempre activos; evita que los datos del volumen se muevan al almacenamiento de objetos.
+* Snapshots de datos fríos (solo Snapshot): Solo se mueven bloques Snapshot de datos fríos a almacenamiento de objetos.
+* Datos de usuario fríos y snapshots (automático): Los bloques de instantáneas de datos fríos y de usuario fríos se mueven al almacenamiento de objetos.
+* Todos los datos de usuario (All): Clasifica todos los datos como inactivos; movimiento inmediato todo el volumen a almacenamiento de objetos.
+
+
+link:concept-cloud-tiering.html#volume-tiering-policies["Más información acerca de las políticas de organización en niveles"].
+
+
+
+=== ¿En qué momento se considera que mis datos están inactivos?
+
+Como la organización en niveles de datos se realiza en el nivel de bloque, un bloque de datos se considera inactivos después de que no haya sido accedido durante un cierto período de tiempo, lo cual se define mediante el atributo de días de refrigeración mínima de la política de organización en niveles. El rango aplicable será de 2-63 días con ONTAP 9.7 y anteriores, o de 2-183 días a partir de ONTAP 9.8.
+
+
+
+=== ¿Cuál es el período de refrigeración predeterminado para los datos antes de que se organicen en niveles en el nivel de cloud?
+
+El período de refrigeración predeterminado para la política de instantáneas en frío es de 2 días, mientras que el período de refrigeración predeterminado para los datos de usuario en frío y las instantáneas es de 31 días. El parámetro refrigerantes-días no se aplica a la política de organización en niveles All.
+
+
+
+=== ¿Todos los datos por niveles se recuperan del almacenamiento de objetos cuando se realiza un backup completo?
+
+Durante el backup completo se leen todos los datos inactivos. La recuperación de los datos depende de la política de organización en niveles que se utilice. Cuando se utilizan las políticas de copias Snapshot y datos de usuario frío y todo, los datos inactivos no se vuelven a escribir en el nivel de rendimiento. Cuando se utilice la política de copias Snapshot en frío, sólo si se utiliza una snapshot antigua para la copia de seguridad, se recuperarán sus bloques de datos inactivos.
+
+
+
+=== ¿Puede elegir un tamaño de organización en niveles por volumen?
+
+No No obstante, puede elegir qué volúmenes son elegibles para la organización en niveles, el tipo de datos que desea organizar en niveles y el período de refrigeración. Esto se realiza asociando una política de organización en niveles con ese volumen.
+
+
+
+=== ¿La política todos los datos de usuario es la única opción para los volúmenes de protección de datos?
+
+No Los volúmenes de protección de datos (DP) pueden asociarse con cualquiera de las tres políticas disponibles. El tipo de política utilizada en los volúmenes de origen y destino (DP) determina la ubicación de escritura de los datos.
+
+
+
+=== ¿Restablecer la política de organización en niveles de un volumen para que Ninguno rehidrate los datos fríos o solo evita que se muevan bloques fríos futuros al cloud?
+
+No se produce ninguna rehidratación cuando se restablece una política de niveles, pero evitará que nuevos bloques de datos se muevan al nivel de cloud.
+
+
+
+=== Después de organizar en niveles los datos en el cloud, ¿puedo cambiar la política de organización en niveles?
+
+Sí. El comportamiento después del cambio depende de la nueva directiva asociada.
+
+
+
+=== ¿Qué debería hacer si quiero garantizar que determinados datos no se trasladan al cloud?
+
+No asocie una política de organización en niveles con el volumen que contiene esos datos.
+
+
+
+=== ¿Dónde se almacenan los metadatos de los archivos?
+
+Los metadatos de un volumen siempre se almacenan de forma local y en el nivel de rendimiento; nunca se organizan en niveles en el cloud.
+
+
+
+== Redes y seguridad
+
+Las siguientes preguntas se refieren a las redes y la seguridad.
+
+
+
+=== ¿Cuáles son los requisitos de red?
+
+* El clúster de ONTAP inicia una conexión HTTPS a través del puerto 443 al proveedor de almacenamiento de objetos.
++
+ONTAP lee y escribe datos en y desde el almacenamiento de objetos. El almacenamiento de objetos nunca se inicia, solo responde.
+
+* Para StorageGRID, el clúster ONTAP inicia una conexión HTTPS a través de un puerto especificado por el usuario a StorageGRID (el puerto se puede configurar durante la configuración del almacenamiento por niveles).
+* Un conector necesita una conexión HTTPS de salida a través del puerto 443 a los clústeres de ONTAP, al almacén de objetos y al servicio Cloud Tiering.
+
+
+Para obtener información detallada, consulte:
+
+* link:task-tiering-onprem-aws.html["Organización en niveles de los datos para Amazon S3"]
+* link:task-tiering-onprem-azure.html["Organización de los datos en niveles en el almacenamiento de Azure Blob"]
+* link:task-tiering-onprem-gcp.html["Organización de los datos en niveles en Google Cloud Storage"]
+* link:task-tiering-onprem-storagegrid.html["Organización de los datos en niveles en StorageGRID"]
+* link:task-tiering-onprem-s3-compat.html["Organización en niveles de los datos en el almacenamiento de objetos S3"]
+
+
+
+
+=== ¿Qué herramientas puedo utilizar para supervisar y crear informes con el fin de gestionar los datos inactivos almacenados en el cloud?
+
+Otra organización en niveles del cloud, https://docs.netapp.com/us-en/active-iq-unified-manager/["Active IQ Unified Manager"^] y.. https://docs.netapp.com/us-en/active-iq/index.html["Asesor digital de Active IQ"^] se puede utilizar para la supervisión y la creación de informes.
+
+
+
+=== ¿Cuáles son las implicaciones si falla el enlace de red con el proveedor de cloud?
+
+Si se produce un fallo de la red, el nivel de rendimiento local permanece en línea y se puede acceder a los datos activos. Sin embargo, los bloques que ya se habían movido al nivel de cloud no se podrán acceder y las aplicaciones recibirán un mensaje de error al intentar acceder a esos datos. Una vez restaurada la conectividad, se podrá acceder a todos los datos sin problemas.
+
+
+
+=== ¿Hay alguna recomendación de ancho de banda de red?
+
+La latencia de lectura de la tecnología FabricPool Tiering subyacente depende de la conectividad al nivel de cloud. Aunque la organización en niveles funciona en cualquier ancho de banda, se recomienda colocar LIF de interconexión de clústeres en puertos de 10 Gbps para ofrecer el rendimiento adecuado. No existen recomendaciones ni limitaciones de ancho de banda para el conector.
+
+
+
+=== ¿Hay latencia cuando un usuario intenta acceder a los datos por niveles?
+
+Sí. Los niveles de cloud no pueden proporcionar la misma latencia que el nivel local, ya que la latencia depende de la conectividad. Para calcular la latencia y el rendimiento de un almacén de objetos, Cloud Tiering proporciona una prueba de rendimiento del cloud (basada en el generador de perfiles de almacén de objetos de ONTAP) que se puede usar una vez que se asocia el almacén de objetos y antes de configurar la organización en niveles.
+
+
+
+=== ¿Cómo están protegidos mis datos?
+
+El cifrado AES-256-GCM se mantiene tanto en el rendimiento como en los niveles de cloud. El cifrado TLS 1.2 se utiliza para cifrar datos a través del cable a medida que se mueve entre niveles y para cifrar la comunicación entre el conector y el clúster de ONTAP y el almacén de objetos.
+
+
+
+=== ¿Necesito un puerto Ethernet instalado y configurado en AFF?
+
+Sí. Una LIF de interconexión de clústeres debe configurarse en un puerto ethernet, en cada nodo dentro de una pareja de alta disponibilidad que aloje volúmenes con datos que haya pensado organizar en niveles en la nube. Para obtener más información, consulte la sección requisitos del proveedor de cloud en el que planea organizar los datos por niveles.
+
+
+
+=== ¿Qué permisos son necesarios?
+
+* link:task-tiering-onprem-aws.html#set-up-s3-permissions["Para Amazon, se necesitan permisos para gestionar el bloque de S3"].
+* Para Azure, no se necesitan permisos adicionales fuera de los permisos que necesite proporcionar a BlueXP.
+* link:task-tiering-onprem-gcp.html#preparing-google-cloud-storage["Para Google Cloud, se necesitan permisos de administrador de almacenamiento para una cuenta de servicio con claves de acceso al almacenamiento"].
+* link:task-tiering-onprem-storagegrid.html#preparing-storagegrid["Para StorageGRID, se necesitan permisos de S3"].
+* link:task-tiering-onprem-s3-compat.html#preparing-s3-compatible-object-storage["Para el almacenamiento de objetos compatible con S3, se necesitan permisos S3"].
+

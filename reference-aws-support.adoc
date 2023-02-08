@@ -1,0 +1,81 @@
+---
+sidebar: sidebar 
+permalink: reference-aws-support.html 
+keywords: aws, amazon, s3, support, regions, storage classes 
+summary: Cloud Tiering admite varias clases de almacenamiento S3 y la mayoría de regiones. 
+---
+= Clases y regiones de almacenamiento S3 admitidas
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Cloud Tiering admite varias clases de almacenamiento S3 y la mayoría de regiones.
+
+
+
+== Clases de almacenamiento S3 compatibles
+
+Cuando configura la organización en niveles de datos en AWS, Cloud Tiering utiliza automáticamente la clase de almacenamiento _Standard_ para sus datos inactivos. La organización en niveles del cloud puede aplicar una regla de ciclo de vida para que los datos se transiciones desde la clase de almacenamiento _Standard_ a otra clase de almacenamiento después de un cierto número de días. Puede elegir entre las siguientes clases de almacenamiento:
+
+* Acceso Estándar-poco frecuente
+* Una Zona de acceso poco frecuente
+* Intelligent-Tiering (AWS mueve datos automáticamente entre dos niveles: Acceso frecuente y acceso poco frecuente: Cuando cambian los patrones de acceso)
+* Recuperación instantánea de Glacier
+
+
+Si no selecciona otra clase de almacenamiento, los datos permanecerán en la clase de almacenamiento _Standard_ y no se aplicarán reglas.
+
+Si configura una regla del ciclo de vida de Cloud Tiering, no debe configurar ninguna regla del ciclo de vida al configurar el bloque en su cuenta de AWS.
+
+https://aws.amazon.com/s3/storage-classes/["Obtenga información acerca de las clases de almacenamiento S3"^].
+
+
+
+== Regiones admitidas de AWS
+
+Cloud Tiering admite las siguientes regiones de AWS.
+
+
+
+=== Asia-Pacífico
+
+* Bombay
+* Seúl
+* Singapur
+* Sídney
+* Tokio
+
+
+
+
+=== Europa
+
+* Frankfurt
+* Irlanda
+* Londres
+* París
+* Estocolmo
+
+
+
+
+=== América del Norte
+
+* Canada Central
+* Este DE EE. UU. (N. Virginia)
+* Este DE EE. UU. (Ohio)
+* Oeste DE EE. UU. (N. California)
+* Oeste DE EE. UU. (Oregón)
+
+
+
+
+=== Sudamérica
+
+* São Paulo
+
