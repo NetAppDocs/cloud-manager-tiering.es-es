@@ -14,7 +14,7 @@ NetApp ofrece soporte para BlueXP y sus servicios cloud de diversas maneras. Hay
 
 
 
-== Autoasistencia
+== Utilice opciones de soporte automático
 
 Estas opciones están disponibles de forma gratuita, las 24 horas del día, los 7 días de la semana:
 
@@ -38,7 +38,7 @@ Apreciamos sus opiniones. Envíe sus comentarios para ayudarnos a mejorar BlueXP
 
 
 
-== Soporte de NetApp
+== Cree un caso con el soporte de NetApp
 
 Además de las opciones de autosoporte anteriores, puede trabajar con un especialista de soporte de NetApp para resolver cualquier problema después de activar el soporte de.
 
@@ -47,10 +47,10 @@ Para utilizar la capacidad *Crear un caso*, primero debe realizar un registro ú
 
 .Pasos
 . En BlueXP, haga clic en *Ayuda > Soporte*.
-. Seleccione una de las opciones disponibles en Soporte técnico:
+. En la página *Recursos*, elija una de las opciones disponibles en Soporte técnico:
 +
 .. Haga clic en *Llame a nosotros* si desea hablar con alguien en el teléfono. Se le dirigirá a una página de netapp.com que enumera los números de teléfono a los que puede llamar.
-.. Haga clic en *Crear un caso* para abrir una incidencia con los especialistas de soporte de NetApp:
+.. Haga clic en *Crear un caso* para abrir una incidencia con un especialista en soporte de NetApp:
 +
 *** *Cuenta del sitio de soporte de NetApp*: Seleccione la cuenta de NSS correspondiente asociada con la persona que abre el caso de soporte. Esta persona será el contacto principal con NetApp para contactar con ella, además de los correos electrónicos adicionales que se proporcionan a continuación.
 +
@@ -67,12 +67,12 @@ Para obtener más información sobre estas prioridades, pase el ratón sobre el 
 
 *** *Descripción del problema*: Proporcione una descripción detallada del problema, incluidos los mensajes de error aplicables o los pasos de solución de problemas que haya realizado.
 *** *Direcciones de correo electrónico adicionales*: Introduzca direcciones de correo electrónico adicionales si desea que alguien más conozca este problema.
+
+
+
+
 +
 image:https://raw.githubusercontent.com/NetAppDocs/cloud-manager-family/main/media/screenshot-create-case.png["Captura de pantalla del formulario Crear un caso que le permite crear un caso con el soporte de NetApp."]
-
-
-
-
 
 
 

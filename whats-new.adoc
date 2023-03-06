@@ -18,6 +18,16 @@ Descubra las novedades de Cloud Tiering.
 
 
 
+== 5 de marzo de 2023
+
+
+
+=== Ahora puede generar un informe de organización en niveles para sus volúmenes
+
+Es posible descargar un informe en la página Tier Volumes para revisar el estado de organización en niveles de todos los volúmenes en los clústeres que se están gestionando. Cloud Tiering genera un archivo .CSV que puede revisar y enviar a otras personas de su empresa según lo necesite. https://docs.netapp.com/us-en/cloud-manager-tiering/task-managing-tiering.html#download-a-tiering-report-for-your-volumes["Descubra cómo descargar el informe de organización en niveles"].
+
+
+
 == 6 de diciembre de 2022
 
 

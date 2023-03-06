@@ -78,6 +78,14 @@ La política de organización en niveles se modifica y los datos comienzan a Tie
 
 
 
+== Descargue un informe de organización en niveles para los volúmenes
+
+Es posible descargar un informe de la página Tier Volumes para revisar el estado de organización en niveles de todos los volúmenes en los clústeres que se están gestionando. Simplemente haga clic en el image:button_download.png["Descargue"] botón. Cloud Tiering genera un archivo .CSV que puede revisar y enviar a otros grupos según sea necesario. El archivo .CSV incluye hasta 10,000 filas de datos.
+
+image:screenshot_tiering_report_download.png["Una captura de pantalla que muestra cómo generar un archivo CSV en el que se enumera el estado de organización en niveles de todos los volúmenes."]
+
+
+
 == Al migrar datos del nivel de cloud al nivel de rendimiento
 
 Los datos organizados en niveles a los que se accede desde el cloud pueden volver a calentarse y moverse de nuevo al nivel de rendimiento. No obstante, si desea promocionar datos de forma proactiva en el nivel de rendimiento desde el nivel de cloud, puede hacerlo en el cuadro de diálogo _Tiering Policy_. Esta función está disponible cuando se utiliza ONTAP 9.8 y versiones posteriores.
